@@ -1,6 +1,6 @@
 import GameItem from './GameItem.js';
 import KeyboardListener from './KeyboardListener.js';
-import Block from './Block.js';
+import Obstacle from './Obstacle.js';
 
 export default class Bird extends GameItem {
   private keyBoardListener: KeyboardListener;
@@ -51,20 +51,20 @@ export default class Bird extends GameItem {
   /**
    * Method to determine of the HZ bird is colliding with a block
    *
-   * @param blocks all the blocks on the screen
-   * @returns true or false
+   * @param obstacles all the obstacles
+   * @returns The colliding obstacle or null
    */
-  public hzCollidesWithBlock(blocks: Block[]): boolean {
-    let collides: boolean = false;
-    blocks.forEach((block) => {
+  public hzCollidesWithObstacle(obstacles: Obstacle[]): Obstacle {
+    let collides: Obstacle = null;
+    obstacles.forEach((obstacle) => {
       if (
-        this.xPosition < block.getXPos() + block.getImage().width
-        && this.xPosition + this.image.width > block.getXPos()
-        && this.yPosition < block.getYPos() + block.getImage().height
-        && this.yPosition + this.image.height > block.getYPos()
+        this.xPosition < obstacle.getXPos() + obstacle.getImage().width
+        && this.xPosition + this.image.width > obstacle.getXPos()
+        && this.yPosition < obstacle.getYPos() + obstacle.getImage().height
+        && this.yPosition + this.image.height > obstacle.getYPos()
       ) {
-        console.log('Collision with block!');
-        collides = true;
+        console.log('Collision with obstacle!');
+        collides = obstacle;
       }
     });
     return collides;

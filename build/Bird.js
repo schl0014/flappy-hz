@@ -20,15 +20,15 @@ export default class Bird extends GameItem {
             this.ySpeed = 1;
         }
     }
-    hzCollidesWithBlock(blocks) {
-        let collides = false;
-        blocks.forEach((block) => {
-            if (this.xPosition < block.getXPos() + block.getImage().width
-                && this.xPosition + this.image.width > block.getXPos()
-                && this.yPosition < block.getYPos() + block.getImage().height
-                && this.yPosition + this.image.height > block.getYPos()) {
-                console.log('Collision with block!');
-                collides = true;
+    hzCollidesWithObstacle(obstacles) {
+        let collides = null;
+        obstacles.forEach((obstacle) => {
+            if (this.xPosition < obstacle.getXPos() + obstacle.getImage().width
+                && this.xPosition + this.image.width > obstacle.getXPos()
+                && this.yPosition < obstacle.getYPos() + obstacle.getImage().height
+                && this.yPosition + this.image.height > obstacle.getYPos()) {
+                console.log('Collision with obstacle!');
+                collides = obstacle;
             }
         });
         return collides;

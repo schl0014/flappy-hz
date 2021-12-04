@@ -1,7 +1,9 @@
-import Block from './Block.js';
+import Obstacle from './Obstacle.js';
 import Bird from './Bird.js';
+import Block from './Block.js';
+import PowerUp from './PowerUp.js';
 export default class Game {
-    blocks;
+    obstacles;
     bird;
     score;
     blockSpeed = 5;
@@ -12,7 +14,7 @@ export default class Game {
         this.canvas.width = window.innerWidth;
         this.canvas.height = 600;
         this.ctx = this.canvas.getContext('2d');
-        this.blocks = [];
+        this.obstacles = [];
         this.score = 0;
         this.bird = this.insertHzBird();
         console.log(this.bird);
@@ -20,16 +22,30 @@ export default class Game {
     }
     loop = () => {
         this.increaseGravity();
-        this.insertExtraBlock();
+        this.insertExtraObstacle();
         this.increaseBlockSpeed();
-        this.blockOutOfCanvas();
+        this.obstacleOutOfCanvas();
         this.bird.handleKeyBoard();
         this.move();
         this.draw();
-        const collidesWithBlock = this.bird.hzCollidesWithBlock(this.blocks);
+        console.log(this.obstacles);
+        const collidingObstacle = this.bird.hzCollidesWithObstacle(this.obstacles);
         const collidesWithSide = this.bird.hzCollidesWithSide(this.canvas);
-        if (collidesWithBlock || collidesWithSide) {
+        if (collidesWithSide) {
             this.drawGameOver();
+        }
+        else if (collidingObstacle != null) {
+            if (collidingObstacle.getType() === 'block') {
+                this.drawGameOver();
+            }
+            else {
+                if (this.blockSpeed > 5) {
+                    this.blockSpeed -= 5;
+                }
+                this.obstacles.splice(this.obstacles.indexOf(collidingObstacle), 1);
+                this.score += 1;
+                requestAnimationFrame(this.loop);
+            }
         }
         else {
             this.score += 1;
@@ -41,27 +57,45 @@ export default class Game {
             this.bird.setYSpeed(1);
         }
     }
-    insertExtraBlock() {
+    insertExtraObstacle() {
         if (this.score === 0 || this.score % Math.round(500 / this.blockSpeed) === 0) {
-            this.blocks.push(this.createBlock());
+            this.obstacles.push(this.createObstacle());
         }
     }
-    createBlock() {
-        const image = Game.loadNewImage('./assets/block.png');
-        return new Block(this.canvas.width, 0, image, this.blockSpeed, this.canvas);
+    createObstacle() {
+        const randomObstacle = Obstacle.randomNumber(0, 100);
+        let image;
+        let yPos;
+        if (randomObstacle >= 80) {
+            image = Game.loadNewImage('./assets/turtle.png');
+        }
+        else {
+            image = Game.loadNewImage('./assets/block.png');
+        }
+        const randomPosition = Obstacle.randomNumber(0, 1);
+        if (randomPosition === 0) {
+            yPos = 0;
+        }
+        else {
+            yPos = this.canvas.height - image.height;
+        }
+        if (randomObstacle >= 80) {
+            return new PowerUp(this.canvas.width, yPos, image, this.blockSpeed, this.canvas.height, this.canvas, 'powerup');
+        }
+        return new Block(this.canvas.width, yPos, image, this.blockSpeed, this.canvas, 'block');
     }
     increaseBlockSpeed() {
         if (this.score % 400 === 0) {
             this.blockSpeed += 2;
-            this.blocks.forEach((block) => {
+            this.obstacles.forEach((block) => {
                 block.setXSpeed(this.blockSpeed);
             });
         }
     }
-    blockOutOfCanvas() {
-        this.blocks.forEach((block, index) => {
+    obstacleOutOfCanvas() {
+        this.obstacles.forEach((block, index) => {
             if (block.getXPos() + block.getImage().width < 0) {
-                this.blocks.splice(index, 1);
+                this.obstacles.splice(index, 1);
             }
         });
     }
@@ -75,7 +109,7 @@ export default class Game {
     }
     move() {
         this.bird.move();
-        this.blocks.forEach((block) => {
+        this.obstacles.forEach((block) => {
             block.move();
         });
     }
@@ -89,7 +123,7 @@ export default class Game {
         this.bird.draw(this.ctx);
     }
     drawBlocks() {
-        this.blocks.forEach((block) => {
+        this.obstacles.forEach((block) => {
             block.draw(this.ctx);
         });
     }
@@ -103,9 +137,6 @@ export default class Game {
         const img = new Image();
         img.src = source;
         return img;
-    }
-    static randomNumber(min, max) {
-        return Math.round(Math.random() * (max - min) + min);
     }
 }
 //# sourceMappingURL=Game.js.map

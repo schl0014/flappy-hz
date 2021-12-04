@@ -1,9 +1,11 @@
-import Block from './Block.js';
+import Obstacle from './Obstacle.js';
 import Bird from './Bird.js';
+import Block from './Block.js';
+import PowerUp from './PowerUp.js';
 
 export default class Game {
   // Properties for game elements
-  private blocks: Block[];
+  private obstacles: Obstacle[];
 
   private bird: Bird;
 
@@ -28,7 +30,7 @@ export default class Game {
     this.canvas.width = window.innerWidth;
     this.canvas.height = 600;
     this.ctx = this.canvas.getContext('2d');
-    this.blocks = [];
+    this.obstacles = [];
     this.score = 0;
 
     this.bird = this.insertHzBird();
@@ -42,21 +44,36 @@ export default class Game {
    */
   private loop = () => {
     this.increaseGravity();
-    this.insertExtraBlock();
+    this.insertExtraObstacle();
     this.increaseBlockSpeed();
-    this.blockOutOfCanvas();
+    this.obstacleOutOfCanvas();
     this.bird.handleKeyBoard();
 
     this.move();
     this.draw();
 
-    const collidesWithBlock = this.bird.hzCollidesWithBlock(this.blocks);
-    const collidesWithSide = this.bird.hzCollidesWithSide(this.canvas);
+    console.log(this.obstacles);
 
-    if (collidesWithBlock || collidesWithSide) {
+    const collidingObstacle: Obstacle = this.bird.hzCollidesWithObstacle(this.obstacles);
+    const collidesWithSide: boolean = this.bird.hzCollidesWithSide(this.canvas);
+
+    if (collidesWithSide) {
       // The game loop ends on game over (the requestAnimationFrame is no longer called).
       // Draw the game over text as last frame.
       this.drawGameOver();
+    } else if (collidingObstacle != null) {
+      if (collidingObstacle.getType() === 'block') {
+        // The game loop ends on game over (the requestAnimationFrame is no longer called).
+        // Draw the game over text as last frame.
+        this.drawGameOver();
+      } else {
+        if (this.blockSpeed > 5) {
+          this.blockSpeed -= 5;
+        }
+        this.obstacles.splice(this.obstacles.indexOf(collidingObstacle), 1);
+        this.score += 1;
+        requestAnimationFrame(this.loop);
+      }
     } else {
       this.score += 1;
       requestAnimationFrame(this.loop);
@@ -75,11 +92,11 @@ export default class Game {
   /**
    * Every few frames, insert a new block in the playing field
    */
-  private insertExtraBlock() {
+  private insertExtraObstacle() {
     if (
       this.score === 0 || this.score % Math.round(500 / this.blockSpeed) === 0
     ) {
-      this.blocks.push(this.createBlock());
+      this.obstacles.push(this.createObstacle());
     }
   }
 
@@ -88,14 +105,42 @@ export default class Game {
    *
    * @returns The block
    */
-  private createBlock(): Block {
-    const image = Game.loadNewImage('./assets/block.png');
+  private createObstacle(): Block {
+    const randomObstacle = Obstacle.randomNumber(0, 100);
+    let image;
+    let yPos: number;
+
+    if (randomObstacle >= 80) {
+      image = Game.loadNewImage('./assets/turtle.png');
+    } else {
+      image = Game.loadNewImage('./assets/block.png');
+    }
+
+    const randomPosition = Obstacle.randomNumber(0, 1);
+    if (randomPosition === 0) {
+      yPos = 0;
+    } else {
+      yPos = this.canvas.height - image.height;
+    }
+
+    if (randomObstacle >= 80) {
+      return new PowerUp(
+        this.canvas.width,
+        yPos,
+        image,
+        this.blockSpeed,
+        this.canvas.height,
+        this.canvas,
+        'powerup',
+      );
+    }
     return new Block(
       this.canvas.width,
-      0,
+      yPos,
       image,
       this.blockSpeed,
       this.canvas,
+      'block',
     );
   }
 
@@ -105,7 +150,7 @@ export default class Game {
   private increaseBlockSpeed() {
     if (this.score % 400 === 0) {
       this.blockSpeed += 2;
-      this.blocks.forEach((block) => {
+      this.obstacles.forEach((block) => {
         block.setXSpeed(this.blockSpeed);
       });
     }
@@ -114,10 +159,10 @@ export default class Game {
   /**
    * Method to determine of a block has fully left the window and remove it from the array.
    */
-  private blockOutOfCanvas() {
-    this.blocks.forEach((block, index) => {
+  private obstacleOutOfCanvas() {
+    this.obstacles.forEach((block, index) => {
       if (block.getXPos() + block.getImage().width < 0) {
-        this.blocks.splice(index, 1);
+        this.obstacles.splice(index, 1);
       }
     });
   }
@@ -151,7 +196,7 @@ export default class Game {
    */
   private move() {
     this.bird.move();
-    this.blocks.forEach((block) => {
+    this.obstacles.forEach((block) => {
       block.move();
     });
   }
@@ -184,7 +229,7 @@ export default class Game {
    * Method to draw all the blocks
    */
   private drawBlocks() {
-    this.blocks.forEach((block) => {
+    this.obstacles.forEach((block) => {
       block.draw(this.ctx);
     });
   }
@@ -223,16 +268,5 @@ export default class Game {
     const img = new Image();
     img.src = source;
     return img;
-  }
-
-  /**
-   * Returns a random number between min and max
-   *
-   * @param min - lower boundary
-   * @param max - upper boundary
-   * @returns a random number between min and max
-   */
-  public static randomNumber(min: number, max: number): number {
-    return Math.round(Math.random() * (max - min) + min);
   }
 }
