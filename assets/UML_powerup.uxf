@@ -1,0 +1,64 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>611</x><y>60</y><w>290</w><h>320</h></coordinates><panel_attributes>Game
+--
+- canvas: HTMLCanvasElement
+- obstacles: Obstacle[]
+- bird: Bird
+- obstacleSpeed: number
+- score: number
+- ctx: CanvasRenderingContext2D
+--
+- loop()
+- increaseGravity()
+- insertExtraObstacle()
+- createObstacle()
+- increaseObstacleSpeed()
+- obstacleOutOfCanvas()
+- drawGameOver()
+- insertHZBird()
+- move()
+- draw()
+- drawBird()
+- drawObstacles()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>741</x><y>370</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;40;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>611</x><y>410</y><w>290</w><h>130</h></coordinates><panel_attributes>/&lt;abstract&gt; GameItem/
+--
+# xPosition: number
+# yPosition: number
+# image:HTMLImageElement
+--
++ draw(ctx: CanvasRenderingContext2D)
++ move()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>241</x><y>790</y><w>310</w><h>80</h></coordinates><panel_attributes>Block
+--
++ move()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>831</x><y>590</y><w>370</w><h>140</h></coordinates><panel_attributes>Bird
+--
+- ySpeed: number
+- keyBoardListener: KeyboardListener
+--
++ move()
++ handleKeyBoard()
++ collidesWithObstacle(obstacles: Obstacle[]): Obstacle
++ collidesWithSide(canvas: HTMLCanvasElement)
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>821</x><y>530</y><w>120</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;100;60</additional_attributes></element><element><id>Relation</id><coordinates><x>411</x><y>700</y><w>100</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>80;10;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>611</x><y>790</y><w>310</w><h>80</h></coordinates><panel_attributes>PowerUp
+--
+- ySpeed: number
+--
++ move()
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>431</x><y>590</y><w>310</w><h>120</h></coordinates><panel_attributes>/&lt;abstract&gt; Obstacle/
+--
+- xSpeed: number
+- type: string
+--
++ move()
++ getType()
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>651</x><y>700</y><w>130</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;110;90</additional_attributes></element><element><id>Relation</id><coordinates><x>581</x><y>530</y><w>110</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;10;60</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1271</x><y>610</y><w>320</w><h>80</h></coordinates><panel_attributes>By returning the obstacle object  that the HZ Bird 
+collides with the Game object can determine 
+which type of obstacle was hit. By returning 
+null you can indicate that no obstacle was hit.
+bg=cyan
+fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1191</x><y>640</y><w>100</w><h>70</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;50;80;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>971</x><y>780</y><w>320</w><h>80</h></coordinates><panel_attributes>The move() method can also be used to check 
+if the PowerUp has hit the bottom or top of
+the canvas
+bg=cyan
+fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>911</x><y>800</y><w>80</w><h>70</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;50;60;10</additional_attributes></element></diagram>

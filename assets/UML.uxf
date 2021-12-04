@@ -1,0 +1,43 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>454</x><y>69</y><w>290</w><h>320</h></coordinates><panel_attributes>Game
+--
+- canvas: HTMLCanvasElement
+- obstacles: Block[]
+- bird: Bird
+- blockSpeed: number
+- score: number
+- ctx: CanvasRenderingContext2D
+--
+- loop()
+- increaseGravity()
+- insertExtraBlock()
+- createBlock()
+- increaseBlockSpeed()
+- blockOutOfCanvas()
+- drawGameOver()
+- insertHZBird()
+- move()
+- draw()
+- drawBird()
+- drawBlocks()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>584</x><y>379</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;40;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>454</x><y>419</y><w>290</w><h>130</h></coordinates><panel_attributes>/&lt;abstract&gt; GameItem/
+--
+# xPosition: number
+# yPosition: number
+# image:HTMLImageElement
+--
++ draw(ctx: CanvasRenderingContext2D)
++ move()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>274</x><y>599</y><w>310</w><h>80</h></coordinates><panel_attributes>Block
+--
+- xSpeed: number
+--
++ move()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>674</x><y>599</y><w>370</w><h>140</h></coordinates><panel_attributes>Bird
+--
+- ySpeed: number
+- keyBoardListener: KeyboardListener
+--
++ move()
++ handleKeyBoard()
++ collidesWithBlock(blocks: Block[])
++ collidesWithSide(canvas: HTMLCanvasElement)
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>664</x><y>539</y><w>120</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;100;60</additional_attributes></element><element><id>Relation</id><coordinates><x>444</x><y>539</y><w>70</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>50;10;10;60</additional_attributes></element></diagram>
